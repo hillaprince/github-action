@@ -1,1 +1,35 @@
-
+---
+definitions: 
+  steps:
+    - step: &Validate-Project
+        name: Validate Project Compilation
+        script:
+          - mvn validate
+        artifacts: &Project-artifacts
+          - target/**
+    - step: 
+        name: &Test-Compiled-Source-Code
+        script:
+          - mvn test
+        artifacts: *Project-artifacts
+    - step:
+        name: &Test-and-Build
+        script:
+          - mvn test
+        artifacts: *Project-artifacts
+  
+pipelines:
+  branches:
+    develop:
+      - step: *Validate-Project
+      - step: *Test-Compiled-Source-Code
+    
+  master:
+     - step: *Validate-Project
+     - step:
+          <<: *Test-Compiled-Source-Code
+          name: Test Project on Master branches
+     -step:
+          <<: *Test-Compiled-Source-Code
+          name: Test Project on Master branches
+          ongoing: false
